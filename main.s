@@ -2,72 +2,90 @@
 
 psect	code, abs
 
-number1		equ	0x0
-number2		equ	0x1
-output		equ	0x2
-SUB_counter	equ	0x3
-SUB_value	equ	0x4
-		
+output	equ 0x0
+min	equ 0x1
+max	equ 0x2
+	
+SUB_counter1	equ 0x3
+SUB_counter2	equ 0x4	
+	
+
+
 start:
     org	    0x0
-    goto    main
+    goto    setup
     org	    0x100
-	
-main:
     
+setup:
     ; Exposing port B
     movlw   0x0
     movwf   TRISB
     
-    ; Number 1
-    movlw   0xA
-    movwf   number1
-
-    ; Number 2
-    movlw   0xB
-    movwf   number2
-
-    call    multiply
+    ; Setting output to zero and subsequently setting the
+    ; minimum value
+    movlw   0x0
     movwf   output
+    movwf   min
     
-    ; Outputting to Port B
-    movf    output, W
+    ; Setting the max to 5
+    movlw   0xFF
+    movwf   max
+    
+increment:
+    call display    ; Displaying on port B
+    ; Incrementing output by 1
+    incf    output
+    
+    ; Checking if output is greater than max
+    movf    max,W
+    cpfsgt  output
+    bra increment
+    
+    decf    output
+    
+decrement:
+    ; Decrementing output by 1
+    decf    output
+    
+    call    display ; Displaying on port B
+    
+    ; Checking if output is less than the minimum value
+    movf    min,W
+    cpfseq  output
+    bra	    decrement
+    bra	    conclusion	; Ending programme
+    
+display:
+    ; Sets port B to the output value
+    movf    output,W
     movwf   PORTB
     
-    goto conclusion
-	
-addTwoNumbers:
-    ; Adds number1 and number2, outputting to wreg.
-    movf    number1, W
-    addwf   number2, W
-    return 
-
-	
-multiply:
-    ; Multiplies number1 by number2.
-    
-    ; Sets the initial value to zero (which will have number2 added to it
-    ; number1 times.
-    movlw   0x0
-    movwf   SUB_counter
-    
-    ; Add number 1 as a counter.
-    movf    number1, W
-    movwf   SUB_counter
-    
-    loop:
-	movf	SUB_value, W
-	addwf	number2, W
-	movwf	SUB_value
-    
-    ; Decremented value is placed back into SUB_counter
-    decfsz  SUB_counter, F
-    bra	loop
-    
-    ; Outputting the result of the multiplication to SUB_value
-    movf    SUB_value, W
-    
+    ;call    delay
     return
     
+    
+delay:
+    ; Set the outer loop counter to 255
+    movlw   0xFF
+    movwf   SUB_counter1
+    
+    
+ 
+    
+outer_loop:
+    movlw   0xFF
+    movwf   SUB_counter2
+
+inner_loop:
+    decfsz  SUB_counter2, f
+    goto    inner_loop
+
+    ; Decrement the outer loop counter and repeat if not zero
+    decfsz  SUB_counter1, f
+    goto    outer_loop
+
+    return
+    
+    
 conclusion:
-    end	
+    end
