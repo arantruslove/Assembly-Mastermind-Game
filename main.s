@@ -8,6 +8,7 @@ max	equ 0x2
 	
 SUB_counter1	equ 0x3
 SUB_counter2	equ 0x4	
+SUB_counter3	equ 0x5
 	
 
 
@@ -53,7 +54,7 @@ decrement:
     movf    min,W
     cpfseq  output
     bra	    decrement
-    bra	    conclusion	; Ending programme
+    goto    conclusion	; Ending programme
     
 display:
     ; Sets port B to the output value
@@ -63,16 +64,17 @@ display:
     ;call    delay
     return
     
-    
 delay:
-    ; Set the outer loop counter to 255
+    ; Set the outermost loop counter to 255
+    movlw   0x2
+    movwf   SUB_counter3
+
+outer_loop:
+    ; Set the middle loop counter to 255
     movlw   0xFF
     movwf   SUB_counter1
     
-    
- 
-    
-outer_loop:
+middle_loop:
     movlw   0xFF
     movwf   SUB_counter2
 
@@ -80,11 +82,16 @@ inner_loop:
     decfsz  SUB_counter2, f
     goto    inner_loop
 
-    ; Decrement the outer loop counter and repeat if not zero
+    ; Decrement the middle loop counter and repeat if not zero
     decfsz  SUB_counter1, f
+    goto    middle_loop
+
+    ; Decrement the outermost loop counter and repeat if not zero
+    decfsz  SUB_counter3, f
     goto    outer_loop
 
     return
+
     
     
 conclusion:
