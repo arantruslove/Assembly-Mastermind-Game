@@ -29,7 +29,7 @@ setup:
     movwf   min
     
     ; Setting the max to 5
-    movlw   0xFF
+    movlw   0x5
     movwf   max
     
 increment:
@@ -61,16 +61,16 @@ display:
     movf    output,W
     movwf   PORTB
     
-    ;call    delay
+    call    delay
     return
     
 delay:
     ; Set the outermost loop counter to 255
-    movlw   0x2
+    movlw   0x14
     movwf   SUB_counter3
 
 outer_loop:
-    ; Set the middle loop counter to 255
+    ; Set the middle loop counter to 20
     movlw   0xFF
     movwf   SUB_counter1
     
@@ -92,7 +92,6 @@ inner_loop:
 
     return
 
-    
-    
+  
 conclusion:
     end
