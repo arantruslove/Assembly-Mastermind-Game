@@ -20,7 +20,7 @@ start:
 setup:
     ; Exposing port B
     movlw   0x0
-    movwf   TRISB
+    movwf   TRISC
     
     ; Setting output to zero and subsequently setting the
     ; minimum value
@@ -59,14 +59,14 @@ decrement:
 display:
     ; Sets port B to the output value
     movf    output,W
-    movwf   PORTB
+    movwf   PORTC
     
     call    delay
     return
     
 delay:
     ; Set the outermost loop counter to 255
-    movlw   0x14
+    movlw   0x30
     movwf   SUB_counter3
 
 outer_loop:
