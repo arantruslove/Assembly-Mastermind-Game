@@ -1,6 +1,7 @@
 	#include <xc.inc>
 
-extrn	Add_Two_Numbers, Input_1, Input_2
+extrn   input1, input2
+extrn	Add_Two_Numbers, Copy
 	
 psect	code, abs
 	
@@ -15,15 +16,22 @@ start:
 	
 	; Adding 2 and 5
 	movlw	0x2
-	movwf	Input_1, A
+	movwf	input1, A
 	
 	movlw	0x5
-	movwf	Input_2, A
-
-	call	Add_Two_Numbers
+	movwf	input2, A
 	
-	; Writing the output to 0x2
+	call	Add_Two_Numbers
 	movwf	0x2, A
 	
+	; Copying the first 3 memory values to 0x7, 0x8 and 0x10
+	movlw	input1
+	movwf	FSR0, A
 	
+	movlw	0x7
+	movwf	FSR1, A
+	movlw	0x3
+	
+	call	Copy
+	    
 	end	main

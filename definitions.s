@@ -1,7 +1,11 @@
 #include <xc.inc>
     
-global  Input_1, Input_2
+global  input1, input2, subVar1, subVar2
 	
 ; Subroutine inputs
-Input_1 EQU 0x0
-Input_2	EQU 0x1
+input1  EQU 0x0
+input2	EQU 0x1
+	
+; Subroutine local memory
+subVar1 EQU 0xA
+subVar2 EQU 0xB
