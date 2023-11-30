@@ -1,7 +1,9 @@
 #include <xc.inc>
     
-global  Add_Two_Numbers, Copy, Number_Correct
-extrn	input1, input2, input3, subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
+global  Add_Two_Numbers, Copy, Number_Correct, Character_Input
+extrn	input1, input2, input3, input4, input5
+extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
+extrn	var1
  
 
 
@@ -128,3 +130,112 @@ guess_equal_target:
 finish:
     movf    subVar1, W
     return
+    
+
+Character_Input:
+    ; Inputs:
+    ; input1: The memory address of the first allowed number
+    ; input2: The number of values allowed contiguously from the memory address
+    ; stored in input1
+    ; input3: The maximum number of values allowed for inputs
+    ; input4: The index on the LCD that the first digit should be output to on 
+    ; the LCD
+    ; input5: The memory address that will store the first of the output numbers
+    
+    ; Setting subVar1 to the maximum number of values allowed for input 
+    ; which will be used to check whether the maximum number of characters have 
+    ; been reached
+    movf    input3, W
+    movwf   subVar1, A
+    
+    ; Setting the first character output location to subVar4
+    movlw   subVar4
+    movwf   FSR0, A
+
+input_loop:
+    ; Await keypad button click here
+    
+    ; Check whether the maximum number of inputs has been reached 
+    
+    
+    ; Moving keypad character input to subVar3 for testing
+    movwf   subVar3, A
+    
+    ; F is the submit key and will branch to the testing stage of the output
+    movlw   0xF
+    subwf   subVar3, W
+    bz	    test_output
+    
+    ; Not accepting the next input if all the input slots are already filled
+    movf    subVar1, W
+    bz	    input_loop
+
+    ; Storing the memory address of the first allowed number
+    movf    input1, W
+    movwf   FSR1, A
+    
+    ; Setting the check input loop to the number of permitted values
+    movf    input2, W
+    movwf   subVar2, A
+    
+check_input:
+    ; Check if the input value is equal to one of the permitted values
+    movf    INDF1, W
+    subwf   subVar3, W
+    
+    ; Adds the character to the memory block and display if it is equal to a
+    ; permitted character
+    bz	    add_to_display 
+    
+    incf    FSR1, A ; Pointing to the memory address of the next allowed value
+    decfsz  subVar2 ; Decrementing the check input loop counter by 1
+    bra	    check_input ;  Check again if not at the end of the loop
+    
+     ; Go back to the input loop if it is deemed that the 
+     ; input character does not match any of the valid 
+     ; characters
+    bra    input_loop 
+    
+add_to_display:
+    movf    subVar3, W
+    movwf   INDF0 ; Add the keypad input to the memory block
+    incf    FSR0  ; Increment to the next location in memory
+    decf    subVar1 ; Decrement the number of remaining slots for character 
+		    ; input
+    
+    ; Update all the values stored beginning at the subVar4 memory block
+    
+    bra	    input_loop
+    
+test_output:
+    ; Setting FSR1 to the memory address of subVar4
+    movlw   subVar4
+    movwf   FSR1, A
+    
+    ; Setting FSR2 to point to the memory address contained in input5
+    movf    input5, W
+    movwf   FSR2, A
+    
+    ; Setting the counter
+    movf    input3, W
+    movwf   subVar2, A
+    
+    ; Testing if the required number of input values have been provided
+    movf    subVar1, W
+    bz	    output_loop
+    bra	    input_loop
+
+output_loop:
+    ; Allocates the values to the output specified by input5
+    movf    INDF1, W
+    movwf   INDF2, A
+    
+    ; Increment memory addresses
+    incf    FSR1
+    incf    FSR2
+    
+    ; Decrement and return if iterated through all the values
+    decfsz  subVar2
+    bra	    output_loop
+    
+    return 
