@@ -1,10 +1,8 @@
 #include <xc.inc>
     
-global  Add_Two_Numbers, Copy, Number_Correct, Character_Input
+global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, RNG
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
-extrn	var1
- 
 
 
 psect	udata_acs   ; reserve data space in access ram
@@ -50,7 +48,7 @@ loop:
 Number_Correct:
     ; Inputs:
     ; input1: The location of the first memory address of the guess
-    ; input2: The memory location of the first target number of the guess
+    ; input2: The location of the first memory address target number 
     ; input3: The number of values to be tested contiguously from FSR0 and FSR1.
     ; For the basic implementation of this game, WREG will be set to 4
     ;
@@ -239,3 +237,50 @@ output_loop:
     bra	    output_loop
     
     return 
+    
+    
+RNG:
+    ; Inputs:
+    ; input1: The first location for the random numbers to be output to
+    ; input2: The number of random numbers to be generated
+    
+    ; Settinig a counter 
+    movf    input2, W
+    movwf   subVar1, A
+    
+    ; Setting a placeholder value for the random numbers
+    movlw   0x1
+    movwf   subVar2, A
+    
+    movlw   0x2
+    movwf   subVar3, A
+    
+    movlw   0x3
+    movwf   subVar4, A
+    
+    movlw   0x4
+    movwf   subVar5, A
+    
+    ; Setting a pointer to the first location of the subroutine generated 
+    ; random number
+    movlw   subVar2
+    movwf   FSR0, A
+    
+    ; Setting a pointer to the first location for the random numbers to be 
+    ; output to
+    movf    input1, W
+    movwf   FSR1, A
+    
+rng_loop:
+    ; Ouputting random number to memory location
+    movf    INDF0, W
+    movwf   INDF1, A
+    
+    incf    FSR0
+    incf    FSR1
+    
+    decfsz  subVar1
+    bra	    rng_loop
+    
+    return
+    
