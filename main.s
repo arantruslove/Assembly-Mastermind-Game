@@ -3,7 +3,7 @@
 extrn   input1, input2, input3, input4, input5
 extrn	max_players, player_num, max_target_num, target_size, number_correct
 extrn	permitted_inputs, target_numbers, guess_array
-extrn	Add_Two_Numbers, Copy, Number_Correct, Character_Input, RNG
+extrn	Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
 	
 psect	code, abs 
 	
@@ -107,6 +107,11 @@ initialise:
 	; Start timer for random number?
 	
 	; Random number generation
+	movlw	target_numbers ; First location of random numbers
+	movwf	input1, A
+	movf	target_size, W
+	movwf	input2, A
+	call	RNG
 
 first_player_turn:
 	; Setting turn to player 1
@@ -141,16 +146,20 @@ player_turn:
 	movlw	target_numbers
 	movwf	input2
 	
-	movf	max_target_num, W
+	movf	target_size, W
 	movwf	input3
 	
 	call	Number_Correct
+	movwf	number_correct, A
 	
 	; Check if all of the guess is correct
-	subwf	max_target_num, W
-	bz	end_game ; Branch to end the game
+	subwf	target_size, W
+	bz	end_game ; Branch to end of the game
 	
 	; Display number correct
+	
+	; Press F to continue
+	call	Press_To_Proceed
 	
 	; Repeat with next player's turn
 	
@@ -165,6 +174,10 @@ player_turn:
 	
 	
 end_game:
+	; Declare winner
+	
+	call	Press_To_Proceed
 	; Reset game
+	bra	initialise
 
 	end	main

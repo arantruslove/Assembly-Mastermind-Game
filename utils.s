@@ -1,8 +1,9 @@
 #include <xc.inc>
     
-global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, RNG
+global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
+extrn	permitted_inputs
 
 
 psect	udata_acs   ; reserve data space in access ram
@@ -224,6 +225,10 @@ test_output:
     bra	    input_loop
 
 output_loop:
+    ; If no characters need to be written to memory then return
+    movf    input2, W
+    bz	    finish_char_input
+    
     ; Allocates the values to the output specified by input5
     movf    INDF1, W
     movwf   INDF2, A
@@ -236,7 +241,30 @@ output_loop:
     decfsz  subVar2
     bra	    output_loop
     
+finish_char_input:
     return 
+    
+    
+Press_To_Proceed:
+    ; Simple function that calls Character_Input for when a player need to
+    ; click to proceed.
+    movlw   permitted_inputs
+    movwf   input1, A
+    
+    movlw   0x0 ; No other allowed values (except 0xF)
+    movwf   input2, A
+    
+    movlw   0x0 ; No inputs alowed
+    movwf   input3, A
+    
+    movlw   0x0 ; Output will not be displayed anyway
+    movwf   input4, A
+    
+    movlw   input4 ; Arbitrarily output to input4
+    movwf   input5, A
+    
+    call    Character_Input
+    return
     
     
 RNG:
