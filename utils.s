@@ -1,6 +1,7 @@
 #include <xc.inc>
     
 global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
+extrn	Keyboard_Press, LCD_Write_Message
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
@@ -158,6 +159,7 @@ input_loop:
     
     
     ; Moving keypad character input to subVar3 for testing
+    call    Keyboard_Press
     movwf   subVar3, A
     
     ; F is the submit key and will branch to the testing stage of the output
@@ -181,7 +183,7 @@ check_input:
     ; Check if the input value is equal to one of the permitted values
     movf    INDF1, W
     subwf   subVar3, W
-    
+   
     ; Adds the character to the memory block and display if it is equal to a
     ; permitted character
     bz	    add_to_display 
@@ -203,7 +205,11 @@ add_to_display:
 		    ; input
     
     ; Update all the values stored beginning at the subVar4 memory block
-    
+    movlw   subVar4
+    movwf   FSR2
+    movlw   0x1
+    call    LCD_Write_Message
+    goto    $
     bra	    input_loop
     
 test_output:
@@ -311,4 +317,4 @@ rng_loop:
     bra	    rng_loop
     
     return
-    
+

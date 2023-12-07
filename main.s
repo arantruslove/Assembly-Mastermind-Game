@@ -2,8 +2,8 @@
 
 extrn   input1, input2, input3, input4, input5
 extrn	max_players, player_num, max_target_num, target_size, number_correct
-extrn	permitted_inputs, target_numbers, guess_array
-extrn	Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
+extrn	permitted_inputs, target_numbers, guess_array, lcd_msg
+extrn	Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG, Keyboard_Press
 	
 psect	code, abs 
 	
@@ -14,6 +14,9 @@ main:
 	org	0x100  ; Main code starts here at address 0x100
 
 initialise:
+	; Testing keyboard press
+	;call	Keyboard_Press
+	
 	; Specifying permitted inputs
 	movlw   permitted_inputs
 	movwf   FSR0, A ; Set FSR0 to point to the start of permitted_inputs
@@ -84,17 +87,18 @@ initialise:
 	
 	; Set up display/keypad
 	
-	; Enter game settings
+	; Display input number of players prompt
+	call	Input_Player_Msg
 	
 	; Setting the Character_Input function inputs
 	movlw	permitted_inputs ; First of the allowed memory values
 	movwf	input1, A
 	
 	movlw	0x6 ; Length of allowed values from 0x30
-	movwf	input2, A
+	movwf	input2
 	
 	movlw	0x1 ; Maximum number of input characters allowed
-	movwf	input3, A
+	movwf	input3
 	
 	movlw	0x0 ; Output displayed from the start of the LCD
 	movwf	input4, A
@@ -120,6 +124,7 @@ first_player_turn:
 	
 player_turn:
 	; Display player number at the top of the LCD
+	call	Player_Turn_Msg
 	
 	; Input guess
 	movlw	permitted_inputs ; First of the allowed memory values
@@ -175,9 +180,246 @@ player_turn:
 	
 end_game:
 	; Declare winner
-	
+	call	Winner_Msg
 	call	Press_To_Proceed
+	
 	; Reset game
 	bra	initialise
 
-	end	main
+Input_Player_Msg:
+    movlw   lcd_msg
+    movwf   FSR0, A
+    
+    movlw   'N'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'o'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   '.'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'O'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'f'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'P'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'l'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'a'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'y'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'e'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   's'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ':'
+    movwf   INDF0, A
+    incf    FSR0, A
+    
+    return
+
+Player_Turn_Msg:
+    movlw   lcd_msg
+    movwf   FSR0, A
+    
+    movlw   'P'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'l'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'a'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'y'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'e'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movf    player_num, W
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'T'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'u'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'n'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    
+    return
+    
+    
+Number_Correct_Msg:
+    movlw   lcd_msg
+    movwf   FSR0, A
+    
+    movlw   'N'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'o'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   '.'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'C'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'o'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movf    player_num, W
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'e'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'c'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   't'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ':'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movf    number_correct, W
+    movwf   INDF0, A
+    incf    FSR0, A
+    
+    return
+    
+Winner_Msg:
+    movlw   lcd_msg
+    movwf   FSR0, A
+    
+    movlw   'W'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'i'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'n'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'n'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'e'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ':'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'P'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'l'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'a'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'y'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'e'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   'r'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   ' '
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   '1'
+    movwf   INDF0, A
+    incf    FSR0, A
+    movlw   '!'
+    movwf   INDF0, A
+    incf    FSR0, A
+    
+    return
+    
+    end	    main
