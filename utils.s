@@ -1,6 +1,7 @@
 #include <xc.inc>
     
 global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
+extrn	Keyboard_Press, LCD_Write_Message
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
@@ -26,14 +27,14 @@ Copy:
     
     ; Set the counter to the value in WREG which will be decremented until the
     ; desired number of values have been copied
-    movwf   subVar1, A
+    movwf   subVar1
     
     ; Iterating over and copying all the desired values to the new memory 
     ; location
 loop:
     ; Copying the data over to the new memory address
     movf    INDF0, W
-    movwf   INDF1, A
+    movwf   INDF1
     
     ; Incrementing the memory locations by 1
     incf    FSR0
@@ -58,30 +59,30 @@ Number_Correct:
     ; Copying the target number values to subroutine memory to allow for 
     ; manipulation
     movf    input3, W
-    movwf   subVar1, A ; Storing the number of terms to be tested
+    movwf   subVar1 ; Storing the number of terms to be tested
     
     movf    input2, W ; Memory location of the first target number of the guess
-    movwf   FSR0, A
+    movwf   FSR0
     
     movlw   subVar5 ; Output of first memory address for copy (0x14)
-    movwf   FSR1, A 
+    movwf   FSR1 
     
     movf    subVar1, W
     call    Copy
     
     ; Setting memory location of the first test value
     movf    input1, W
-    movwf   FSR0, A
+    movwf   FSR0
     
     ; Setting a tally to zero
     movlw   0x0
-    movwf   subVar1, A ; 0x0
+    movwf   subVar1 ; 0x0
     
     
     ; Setting a guess counter that tracks the number of guesses that need to
     ; be checked
     movf    input3, W
-    movwf   subVar2, A ; 0x11
+    movwf   subVar2 ; 0x11
     incf    subVar2    ; Incrementing by 1 since this counter is checked at the
 		       ; start of the guess loop
     
@@ -89,18 +90,18 @@ guess_loop:
     ; Setting the target tracker which tracks the number of target values 
     ; remaning to be checked for the given guess
     movf    input3, W
-    movwf   subVar3, A
+    movwf   subVar3
     
     ; Setting memory location to the first target value
     movlw   subVar5 ; 0x14
-    movwf   FSR1, A
+    movwf   FSR1
     
     ; Setting the test guess value
     movf    INDF0, W
-    movwf   subVar4, A
+    movwf   subVar4
     
     ; Decrement counter to check when all the guess values have been tested
-    decf     subVar2, A
+    decf     subVar2
     movf     subVar2, W
     bz	     finish
     
@@ -110,19 +111,19 @@ target_loop:
     bz	    guess_equal_target
     
 increment_target:
-    incf    FSR1, A ; Increment target location by 1
+    incf    FSR1 ; Increment target location by 1
     
     decfsz  subVar3 ; Skip and go to guess_loop when the target counter has
 		    ; reached zero
     bra	    target_loop ; Repeat loop for next target value
     
-    incf    FSR0, A ; Point to the next guess value's memory address
+    incf    FSR0 ; Point to the next guess value's memory address
     bra	    guess_loop 
 
 guess_equal_target:
     incf    subVar1
     clrf    INDF1 ; Setting the guess to zero so repeats aren't counted
-    incf    FSR0, A ; Point to the next guess value's memory address
+    incf    FSR0 ; Point to the next guess value's memory address
     bra	    guess_loop
     
 
@@ -145,11 +146,11 @@ Character_Input:
     ; which will be used to check whether the maximum number of characters have 
     ; been reached
     movf    input3, W
-    movwf   subVar1, A
+    movwf   subVar1
     
     ; Setting the first character output location to subVar4
     movlw   subVar4
-    movwf   FSR0, A
+    movwf   FSR0
 
 input_loop:
     ; Await keypad button click here
@@ -158,7 +159,8 @@ input_loop:
     
     
     ; Moving keypad character input to subVar3 for testing
-    movwf   subVar3, A
+    call    Keyboard_Press
+    movwf   subVar3
     
     ; F is the submit key and will branch to the testing stage of the output
     movlw   0xF
@@ -171,22 +173,22 @@ input_loop:
 
     ; Storing the memory address of the first allowed number
     movf    input1, W
-    movwf   FSR1, A
+    movwf   FSR1
     
     ; Setting the check input loop to the number of permitted values
     movf    input2, W
-    movwf   subVar2, A
+    movwf   subVar2
     
 check_input:
     ; Check if the input value is equal to one of the permitted values
     movf    INDF1, W
     subwf   subVar3, W
-    
+   
     ; Adds the character to the memory block and display if it is equal to a
     ; permitted character
     bz	    add_to_display 
     
-    incf    FSR1, A ; Pointing to the memory address of the next allowed value
+    incf    FSR1 ; Pointing to the memory address of the next allowed value
     decfsz  subVar2 ; Decrementing the check input loop counter by 1
     bra	    check_input ;  Check again if not at the end of the loop
     
@@ -203,21 +205,24 @@ add_to_display:
 		    ; input
     
     ; Update all the values stored beginning at the subVar4 memory block
-    
+    movlw   subVar4
+    movwf   FSR2
+    movlw   0x1
+    call    LCD_Write_Message
     bra	    input_loop
     
 test_output:
     ; Setting FSR1 to the memory address of subVar4
     movlw   subVar4
-    movwf   FSR1, A
+    movwf   FSR1
     
     ; Setting FSR2 to point to the memory address contained in input5
     movf    input5, W
-    movwf   FSR2, A
+    movwf   FSR2
     
     ; Setting the counter
     movf    input3, W
-    movwf   subVar2, A
+    movwf   subVar2
     
     ; Testing if the required number of input values have been provided
     movf    subVar1, W
@@ -231,7 +236,7 @@ output_loop:
     
     ; Allocates the values to the output specified by input5
     movf    INDF1, W
-    movwf   INDF2, A
+    movwf   INDF2
     
     ; Increment memory addresses
     incf    FSR1
@@ -249,19 +254,19 @@ Press_To_Proceed:
     ; Simple function that calls Character_Input for when a player need to
     ; click to proceed.
     movlw   permitted_inputs
-    movwf   input1, A
+    movwf   input1
     
     movlw   0x0 ; No other allowed values (except 0xF)
-    movwf   input2, A
+    movwf   input2
     
     movlw   0x0 ; No inputs alowed
-    movwf   input3, A
+    movwf   input3
     
     movlw   0x0 ; Output will not be displayed anyway
-    movwf   input4, A
+    movwf   input4
     
     movlw   input4 ; Arbitrarily output to input4
-    movwf   input5, A
+    movwf   input5
     
     call    Character_Input
     return
@@ -274,35 +279,35 @@ RNG:
     
     ; Settinig a counter 
     movf    input2, W
-    movwf   subVar1, A
+    movwf   subVar1
     
     ; Setting a placeholder value for the random numbers
     movlw   0x1
-    movwf   subVar2, A
+    movwf   subVar2
     
     movlw   0x2
-    movwf   subVar3, A
+    movwf   subVar3
     
     movlw   0x3
-    movwf   subVar4, A
+    movwf   subVar4
     
     movlw   0x4
-    movwf   subVar5, A
+    movwf   subVar5
     
     ; Setting a pointer to the first location of the subroutine generated 
     ; random number
     movlw   subVar2
-    movwf   FSR0, A
+    movwf   FSR0
     
     ; Setting a pointer to the first location for the random numbers to be 
     ; output to
     movf    input1, W
-    movwf   FSR1, A
+    movwf   FSR1
     
 rng_loop:
     ; Ouputting random number to memory location
     movf    INDF0, W
-    movwf   INDF1, A
+    movwf   INDF1
     
     incf    FSR0
     incf    FSR1
@@ -311,4 +316,3 @@ rng_loop:
     bra	    rng_loop
     
     return
-    
