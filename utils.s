@@ -163,7 +163,7 @@ input_loop:
     movwf   subVar3
     
     ; F is the submit key and will branch to the testing stage of the output
-    movlw   0xF
+    movlw   'F'
     subwf   subVar3, W
     bz	    test_output
     
@@ -207,9 +207,9 @@ add_to_display:
     ; Update all the values stored beginning at the subVar4 memory block
     movlw   subVar4
     movwf   FSR2
-    movlw   0x1
+    movf    subVar1, W   ; Number of characters to be displayed
+    subwf   input3, W
     call    LCD_Write_Message
-    goto    $
     bra	    input_loop
     
 test_output:
@@ -317,4 +317,5 @@ rng_loop:
     bra	    rng_loop
     
     return
+
 
