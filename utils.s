@@ -2,6 +2,7 @@
     
 global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
 extrn	Keyboard_Press, LCD_Write_Message
+extrn	LCD_clear
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
@@ -148,8 +149,8 @@ Character_Input:
     movf    input3, W
     movwf   subVar1
     
-    ; Setting the first character output location to subVar4
-    movlw   subVar4
+    ; Setting the first character output location to subVar6
+    movlw   subVar6
     movwf   FSR0
 
 input_loop:
@@ -163,7 +164,7 @@ input_loop:
     movwf   subVar3
     
     ; F is the submit key and will branch to the testing stage of the output
-    movlw   0xF
+    movlw   'F'
     subwf   subVar3, W
     bz	    test_output
     
@@ -205,15 +206,17 @@ add_to_display:
 		    ; input
     
     ; Update all the values stored beginning at the subVar4 memory block
-    movlw   subVar4
+    call    LCD_clear
+    movlw   subVar6
     movwf   FSR2
-    movlw   0x1
+    movf    subVar1, W   ; Number of characters to be displayed
+    subwf   input3, W
     call    LCD_Write_Message
     bra	    input_loop
     
 test_output:
-    ; Setting FSR1 to the memory address of subVar4
-    movlw   subVar4
+    ; Setting FSR1 to the memory address of subVar6
+    movlw   subVar6
     movwf   FSR1
     
     ; Setting FSR2 to point to the memory address contained in input5
@@ -282,16 +285,16 @@ RNG:
     movwf   subVar1
     
     ; Setting a placeholder value for the random numbers
-    movlw   0x1
+    movlw   '1'
     movwf   subVar2
     
-    movlw   0x2
+    movlw   '2'
     movwf   subVar3
     
-    movlw   0x3
+    movlw   '3'
     movwf   subVar4
     
-    movlw   0x4
+    movlw   '4'
     movwf   subVar5
     
     ; Setting a pointer to the first location of the subroutine generated 
@@ -316,3 +319,5 @@ rng_loop:
     bra	    rng_loop
     
     return
+
+

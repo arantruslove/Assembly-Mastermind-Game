@@ -1,14 +1,13 @@
     #include <xc.inc>
 
 global  LCD_Setup, LCD_Write_Message, LCD_Write_Hex, LCD_clear, LCD_shift, LCD_delay, LCD_Write_Hex_Dig
-global	LCD_Send_Byte_D, LCD_Send_Byte_I, LCD_delay_ms	
+global	LCD_Send_Byte_D, LCD_Send_Byte_I
 psect	udata_acs   ; named variables in access ram
 LCD_cnt_l:	ds 1	; reserve 1 byte for variable LCD_cnt_l
 LCD_cnt_h:	ds 1	; reserve 1 byte for variable LCD_cnt_h
 LCD_cnt_ms:	ds 1	; reserve 1 byte for ms counter
 LCD_tmp:	ds 1	; reserve 1 byte for temporary use
 LCD_counter:	ds 1	; reserve 1 byte for counting through nessage
-psect	udata_acs   ; named variables in access ram
 
 PSECT	udata_acs_ovr,space=1,ovrld,class=COMRAM
 LCD_hex_tmp:	ds 1    ; reserve 1 byte for variable LCD_hex_tmp
