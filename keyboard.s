@@ -290,6 +290,19 @@ Asci_Map:
     movlw   0x9
     subwf   subVar5, W
     bz	    asci_10_match
+    
+    movlw   0xA
+    subwf   subVar5, W
+    bz	    asci_11_match
+    
+    movlw   0xB
+    subwf   subVar5, W
+    bz	    asci_12_match
+    
+    movlw   0xC
+    subwf   subVar5, W
+    bz	    asci_13_match
+    
 
 asci_1_match:
     movlw   '0'
@@ -330,6 +343,21 @@ asci_9_match:
 asci_10_match:
     movlw   '9'
     return
+    
+asci_11_match:
+    movlw   'A'
+    return
+    
+asci_12_match:
+    movlw   'B'
+    return
+    
+asci_13_match:
+    movlw   'C'
+    return
+    
+    
+    
     
     end
 
