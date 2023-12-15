@@ -38,7 +38,7 @@ RNG:
 rng_loop:
     ; Ouputting random number to memory location
     movf    INDF0, W
-    call    Asci_Map
+    call    Asci_Map ; Convert number to corresponding Ascii
     movwf   INDF1
     
     incf    FSR0

@@ -5,15 +5,12 @@ extrn	subVar5
 
 psect	udata_acs   ; named variables in access ram
 
-KB_Val  EQU 0x0
-KB_Col  EQU 0x1
-KB_Row  EQU 0x2
+keyboardColumn  EQU 0x1
+keyboardRow  EQU 0x2
 KB_Fin  EQU 0x3
 KB_Pressed  EQU 0x4
 KB_Fix  EQU 0x5
                 
-KB_row EQU 0x6
-KB_col  EQU 0x7
 KB_fin   EQU 0x8
 LCD_cnt_l   EQU 0x9
 LCD_cnt_h   EQU 0xA
@@ -43,9 +40,9 @@ keyboard_wait:
 
 keyboard_check:
                 movlw  0x0
-                movwf  KB_row
+                movwf  keyboardRow
                 movlw  0x0
-                movwf  KB_col
+                movwf  keyboardColumn
                 
     
                 banksel PADCFG1
@@ -65,11 +62,11 @@ keyboard_check:
                 movwf  PORTE, A
                 
                 ; Read 4 PORTE input pins
-                movff    PORTE, KB_row
+                movff    PORTE, keyboardRow
 
                 ; Invert the pins to show only the pressed ones
                 movlw  0x0F
-                xorwf    KB_row, 1, 0
+                xorwf    keyboardRow, 1, 0
                 
                 ; Configure bits 0-3 output, 4-7 input
                 movlw  0xF0
@@ -84,12 +81,12 @@ keyboard_check:
                 
 
                 ; Read4 PORTE input pins
-                movff    PORTE, KB_col
+                movff    PORTE, keyboardColumn
                 movlw  0xF0
-                xorwf    KB_col, 1, 0
+                xorwf    keyboardColumn, 1, 0
                 
-                movf     KB_col, W
-                iorwf     KB_row, W
+                movf     keyboardColumn, W
+                iorwf     keyboardRow, W
                 movwf  KB_Fin
                 
 keymap:
