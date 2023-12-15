@@ -137,7 +137,7 @@ player_turn:
 	movlw	permitted_inputs ; First of the allowed memory values
 	movwf	input1
 	
-	movlw	0x12 ; 12 allowed values
+	movlw	0xC ; 12 allowed values
 	movwf	input2
 	
 	movlw	0x4 ; Maximum number of input characters allowed
