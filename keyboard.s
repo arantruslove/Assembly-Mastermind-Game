@@ -7,15 +7,12 @@ psect	udata_acs   ; named variables in access ram
 
 keyboardColumn  EQU 0x1
 keyboardRow  EQU 0x2
-KB_Fin  EQU 0x3
-KB_Pressed  EQU 0x4
-KB_Fix  EQU 0x5
-                
-KB_fin   EQU 0x8
-LCD_cnt_l   EQU 0x9
-LCD_cnt_h   EQU 0xA
-LCD_cnt_ms  EQU 0xB
-zeroCheck   EQU 0xC
+keyboardResult  EQU 0x3
+              
+LCD_cnt_l   EQU 0x4
+LCD_cnt_h   EQU 0x5
+LCD_cnt_ms  EQU 0x6
+zeroCheck   EQU 0x7
     
 psect	kb_code,class=CODE
     
@@ -25,133 +22,116 @@ Keyboard_Press:
     movwf   zeroCheck
     movlw   0x0
     subwf   zeroCheck, W
-    bz           keyboard_wait
-    
-    bra         Keyboard_Press
+    bz      keyboard_wait
+    bra     Keyboard_Press
     
 keyboard_wait:
+    ; Register the keyboard press
     call    keyboard_check
     movwf   zeroCheck
     movlw   0x0
     subwf   zeroCheck, W
-    bz           keyboard_wait
+    bz      keyboard_wait
     return 
                 
 
 keyboard_check:
-                movlw  0x0
-                movwf  keyboardRow
-                movlw  0x0
-                movwf  keyboardColumn
-                
-    
+		; Resistor setup
                 banksel PADCFG1
-                bsf          REPU
-                clrf          LATE, A
-                banksel 0  ; we need this to put default bank back to A
+                bsf     REPU
+                clrf    LATE, A
+                banksel 0  
                 
+                ; Determining the row click
                 movlw  0x0F
                 movwf  TRISE
+              
+                movlw  0x1
+                call   LCD_delay_ms
                 
-                ; delay
-                movlw  1
-                call          LCD_delay_ms
-                
-                ; Drive output bits low all at once
-                movlw  0x00
-                movwf  PORTE, A
-                
-                ; Read 4 PORTE input pins
                 movff    PORTE, keyboardRow
-
-                ; Invert the pins to show only the pressed ones
                 movlw  0x0F
-                xorwf    keyboardRow, 1, 0
+                xorwf    keyboardRow, 1, 0 ; Inverting to set the position of the click to 1
                 
-                ; Configure bits 0-3 output, 4-7 input
+                ; Determining the column click
                 movlw  0xF0
                 movwf  TRISE
                 
-                movlw  1
-                call          LCD_delay_ms
-                
-                ; Drive output bits low all at once
-                movlw  0x00
-                movwf  PORTE, A
-                
-
-                ; Read4 PORTE input pins
+                movlw  0x1
+                call   LCD_delay_ms
+        
                 movff    PORTE, keyboardColumn
-                movlw  0xF0
-                xorwf    keyboardColumn, 1, 0
+                movlw	 0xF0
+                xorwf    keyboardColumn, 1, 0 ; Inverting to set the position of the click to 1
                 
+		; Combining the row and column values into a single byte
                 movf     keyboardColumn, W
                 iorwf     keyboardRow, W
-                movwf  KB_Fin
+                movwf	keyboardResult
                 
 keymap:
                 movlw  0b00010001
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Ckey
                 
                 movlw  0b00010010
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Dkey      
                 
                 movlw  0b00010100
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Ekey
                 
                 movlw  0b00011000
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Fkey
                 
                 movlw  0b00100001
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Bkey
                 
                 movlw  0b00100010
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           ninekey 
                 
                 movlw  0b00100100
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           sixkey
                 
                 movlw  0b00101000
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           threekey
                 
                 movlw  0b01000001
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           zerokey
                 
                 movlw  0b01000010
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           eightkey              
                 
                 movlw  0b01000100
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           fivekey
                 
                 movlw  0b01001000
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           twokey
                 
                 movlw  0b10000001
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           Akey
                 
                 movlw  0b10000010
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           sevenkey             
                 
                 movlw  0b10000100
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           fourkey
                 
                 movlw  0b10001000
-                subwf   KB_Fin, W
+                subwf   keyboardResult, W
                 bz           onekey
                 
                 movlw  0x0
@@ -352,9 +332,5 @@ asci_12_match:
 asci_13_match:
     movlw   'C'
     return
-    
-    
-    
-    
     end
 
