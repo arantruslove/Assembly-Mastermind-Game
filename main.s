@@ -4,7 +4,7 @@ extrn   input1, input2, input3, input4, input5
 extrn	max_players, player_num, max_target_num, target_size, number_correct
 extrn	permitted_inputs, target_numbers, guess_array, lcd_msg
 extrn	Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG, Keyboard_Press, Asci_Map
-extrn	LCD_Setup, LCD_Write_Message, LCD_shift, LCD_clear
+extrn	LCD_Setup, LCD_Write_Message, LCD_Bottom_Row, LCD_Clear
 	
 psect	code, abs 
 	
@@ -109,7 +109,7 @@ initialise:
 	movlw	max_players
 	movwf	input5 ; Storing in max_players memory location
 	call	Character_Input
-	call	LCD_clear
+	call	LCD_Clear
 	
 	; Start timer for random number?
 	
@@ -151,7 +151,7 @@ player_turn:
 	
 	; Input guess
 	call	Character_Input
-	call	LCD_clear
+	call	LCD_Clear
 	
 	; Check guess
 	movlw	guess_array
@@ -180,7 +180,7 @@ player_turn:
 	movwf	FSR2
 	movlw	12
 	call	LCD_Write_Message
-	call	LCD_shift
+	call	LCD_Bottom_Row
 	movlw	number_correct
 	movwf	FSR2
 	movlw	0x1
@@ -189,7 +189,7 @@ player_turn:
 	
 	; Press F to continue
 	call	Press_To_Proceed
-	call	LCD_clear ; Clearing LCD for next turn
+	call	LCD_Clear ; Clearing LCD for next turn
 	
 	; Repeat with next player's turn
 	

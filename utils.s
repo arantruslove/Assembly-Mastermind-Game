@@ -2,7 +2,7 @@
     
 global  Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
 extrn	Keyboard_Press, LCD_Write_Message, Asci_Map
-extrn	LCD_clear
+extrn	LCD_Clear
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
@@ -200,7 +200,7 @@ add_to_display:
 		    ; input
     
     ; Update all the values stored beginning at the subVar4 memory block
-    call    LCD_clear
+    call    LCD_Clear
     movlw   subVar6
     movwf   FSR2
     movf    subVar1, W   ; Number of characters to be displayed
