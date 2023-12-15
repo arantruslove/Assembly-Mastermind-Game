@@ -3,7 +3,7 @@
 extrn   input1, input2, input3, input4, input5
 extrn	max_players, player_num, max_target_num, target_size, number_correct
 extrn	permitted_inputs, target_numbers, guess_array, lcd_msg
-extrn	Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG, Keyboard_Press, Asci_Map
+extrn	Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG, Keyboard_Press, Asci_Map
 extrn	LCD_Setup, LCD_Write_Message, LCD_shift, LCD_clear
 	
 psect	code, abs 
@@ -150,7 +150,6 @@ player_turn:
 	movwf	input5 ; Storing in max_players memory location
 	
 	; Input guess
-
 	call	Character_Input
 	call	LCD_clear
 	

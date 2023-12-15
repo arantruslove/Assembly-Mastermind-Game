@@ -1,24 +1,16 @@
 #include <xc.inc>
     
-global  Add_Two_Numbers, Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
+global  Copy, Number_Correct, Character_Input, Press_To_Proceed, RNG
 extrn	Keyboard_Press, LCD_Write_Message, Asci_Map
 extrn	LCD_clear
-extrn	random_start
 extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
-extrn	random1
 
 
 psect	udata_acs   ; reserve data space in access ram
 
 psect	utils,class=CODE
-	
-Add_Two_Numbers:
-    ; Adds Input_1 and Input_2, returning the result to WREG
-    movf    input1, W
-    addwf   input2, W
-    return
 
 Copy:
     ; Inputs:
@@ -274,55 +266,6 @@ Press_To_Proceed:
     movwf   input5
     
     call    Character_Input
-    return
-    
-    
-RNG:
-    ; Inputs:
-    ; input1: The first location for the random numbers to be output to
-    ; input2: The number of random numbers to be generated
-    
-    ; Settinig a counter 
-    movf    input2, W
-    movwf   subVar1
-    
-    ; Setting a placeholder value for the random numbers
-;    movlw   '1'
-;    movwf   subVar2
-;    
-;    movlw   '2'
-;    movwf   subVar3
-;    
-;    movlw   '3'
-;    movwf   subVar4
-;    
-;    movlw   '4'
-;    movwf   subVar5
-    
-    call    random_start
-    
-    ; Setting a pointer to the first location of the subroutine generated 
-    ; random number
-    movlw   random1
-    movwf   FSR0
-    
-    ; Setting a pointer to the first location for the random numbers to be 
-    ; output to
-    movf    input1, W
-    movwf   FSR1
-    
-rng_loop:
-    ; Ouputting random number to memory location
-    movf    INDF0, W
-    call    Asci_Map
-    movwf   INDF1
-    
-    incf    FSR0
-    incf    FSR1
-    
-    decfsz  subVar1
-    bra	    rng_loop
-    
     return
 
 
