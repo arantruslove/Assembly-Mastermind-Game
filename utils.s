@@ -7,9 +7,7 @@ extrn	input1, input2, input3, input4, input5
 extrn	subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 extrn	permitted_inputs
 
-
 psect	udata_acs   ; reserve data space in access ram
-
 psect	utils,class=CODE
 
 Copy:

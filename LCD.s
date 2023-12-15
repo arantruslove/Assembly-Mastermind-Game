@@ -114,7 +114,7 @@ LCD_Clear:
 	return
 
 LCD_Bottom_Row:
-	; 
+	; Sets the LCD output to the bottom row
 	movlw	0011000000B	
 	call	LCD_Send_Byte_I
 	movlw	10		
