@@ -1,3 +1,7 @@
+; Coded adapted from the Imperial physics year 3 microprocessors lab repository
+;(https://github.com/ImperialCollegeLondon/MicroprocessorsLab/tree/LCD_Hello_World)
+; LCD.s file
+    
     #include <xc.inc>
 
 global  LCD_Setup, LCD_Write_Message, LCD_Bottom_Row, LCD_Clear, LCD_delay
@@ -123,6 +127,7 @@ LCD_Bottom_Row:
 	
     
 ; ** a few delay routines below here as LCD timing can be quite critical ****
+; From 
 LCD_delay_ms:		    ; delay given in ms in W
 	movwf	LCD_cnt_ms, A
 lcdlp2:	movlw	250	    ; 1 ms delay

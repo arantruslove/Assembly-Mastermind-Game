@@ -1,4 +1,4 @@
-  #include <xc.inc>
+    #include <xc.inc>
 
 global  Keyboard_Press, Asci_Map
 extrn	subVar5
@@ -179,6 +179,7 @@ onekey:
                 return
 
    
+; From https://github.com/ImperialCollegeLondon/MicroprocessorsLab/tree/LCD_Hello_World
 ; ** a few delay routines below here as LCD timing can be quite critical ****
 LCD_delay_ms:		    ; delay given in ms in W
 	movwf	LCD_cnt_ms, A

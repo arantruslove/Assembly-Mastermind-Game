@@ -1,3 +1,7 @@
+; Coded adapted from the Imperial physics year 3 microprocessors lab repository
+;(https://github.com/ImperialCollegeLondon/MicroprocessorsLab/tree/ADC_test_measurement)
+; ACD.s file
+    
 #include <xc.inc>
 
 global RNG
