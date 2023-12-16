@@ -2,19 +2,11 @@
 
 global  Keyboard_Press, Asci_Map
 extrn	subVar5
+extrn	keyboardColumn, keyboardRow, keyboardResult, zeroCheck
+extrn	LCD_cnt_l, LCD_cnt_h, LCD_cnt_ms
 
 psect	udata_acs   ; named variables in access ram
-
-keyboardColumn  EQU 0x1
-keyboardRow  EQU 0x2
-keyboardResult  EQU 0x3
-              
-LCD_cnt_l   EQU 0x4
-LCD_cnt_h   EQU 0x5
-LCD_cnt_ms  EQU 0x6
-zeroCheck   EQU 0x7
-    
-psect	kb_code,class=CODE
+psect	keyboard_code,class=CODE
     
 Keyboard_Press:
     ; Make sure that the keyboard is not already pressed
