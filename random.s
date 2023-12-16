@@ -2,13 +2,7 @@
 
 global RNG
 extrn	input1, input2, subVar1, Asci_Map
-    
-number EQU 0x50
-random1 EQU 0x20
-random2 EQU 0x21
-random3 EQU 0x22
-random4 EQU 0x23
-finish EQU 0x24
+extrn	number, random1, random2, random3, random4, finish
 
 psect random_code,class=CODE
  

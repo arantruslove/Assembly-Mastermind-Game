@@ -1,9 +1,19 @@
 #include <xc.inc>
-    
+
+global	number, random1, random2, random3, random4, finish
 global  input1, input2, input3, input4, input5
 global  subVar1, subVar2, subVar3, subVar4, subVar5, subVar6
 global	max_players, player_num, max_target_num, target_size, number_correct
 global  permitted_inputs, target_numbers, guess_array, lcd_msg
+    
+    
+; Random number variables
+number EQU 0x50
+random1 EQU 0x20
+random2 EQU 0x21
+random3 EQU 0x22
+random4 EQU 0x23
+finish EQU 0x24
    
 ; Subroutine inputs (0x0 to 0xF)
 input1  EQU 0x95
