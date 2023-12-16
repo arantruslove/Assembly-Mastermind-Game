@@ -2,17 +2,17 @@
 
 global  LCD_Setup, LCD_Write_Message, LCD_Bottom_Row, LCD_Clear, LCD_delay
 global	LCD_Send_Byte_D, LCD_Send_Byte_I
+
+extrn	LCD_cnt_l, LCD_cnt_h, LCD_cnt_ms
+    
 psect	udata_acs   ; named variables in access ram
-LCD_cnt_l:	ds 1	; reserve 1 byte for variable LCD_cnt_l
-LCD_cnt_h:	ds 1	; reserve 1 byte for variable LCD_cnt_h
-LCD_cnt_ms:	ds 1	; reserve 1 byte for ms counter
 LCD_tmp:	ds 1	; reserve 1 byte for temporary use
 LCD_counter:	ds 1	; reserve 1 byte for counting through nessage
-	LCD_E	EQU 5	; LCD enable bit
-    	LCD_RS	EQU 4	; LCD register select bit
+LCD_E	EQU 5	; LCD enable bit
+LCD_RS	EQU 4	; LCD register select bit
 
 psect	lcd_code,class=CODE
-    
+	
 LCD_Setup:
 	clrf    LATB, A
 	movlw   11000000B	    ; RB0:5 all outputs
