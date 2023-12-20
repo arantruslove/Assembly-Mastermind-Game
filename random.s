@@ -16,7 +16,7 @@ RNG:
     ; input1: The first location for the random numbers to be output to
     ; input2: The number of random numbers to be generated
     
-    ; Settinig a counter 
+    ; Setting a counter 
     movf    input2, W
     movwf   subVar1
     
